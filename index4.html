@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Form Validation Application</title>
+  <!-- jQuery CDN -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .form-container {
+      background-color: #fff;
+      padding: 40px 30px;
+      border-radius: 10px;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+      width: 400px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #0b79d0;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 8px;
+      border: 2px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    .password-wrapper {
+      display: flex;
+      align-items: center;
+    }
+
+    .password-wrapper button {
+      margin-left: 8px;
+      padding: 10px 12px;
+      border: none;
+      background-color: #0b79d0;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button[type="submit"] {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      font-size: 16px;
+      background-color: #0b79d0;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button[type="submit"]:hover,
+    .password-wrapper button:hover {
+      background-color: #085a9d;
+    }
+
+    .error-msg {
+      color: #ff4c4c;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    .success-msg {
+      color: green;
+      font-size: 16px;
+      margin-top: 15px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="form-container">
+    <form id="registrationForm" novalidate>
+      <h2>User Registration</h2>
+
+      <!-- Name -->
+      <label for="name">Name *</label>
+      <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+      <div class="error-msg" id="nameError"></div>
+
+      <!-- Email -->
+      <label for="email">Email *</label>
+      <input type="email" id="email" name="email" placeholder="user@example.com" required>
+      <div class="error-msg" id="emailError"></div>
+
+      <!-- Phone -->
+      <label for="phone">Phone Number *</label>
+      <input type="tel" id="phone" name="phone" placeholder="10-digit number" required>
+      <div class="error-msg" id="phoneError"></div>
+
+      <!-- Password -->
+      <label for="password">Password *</label>
+      <div class="password-wrapper">
+        <input type="password" id="password" name="password" placeholder="Enter password" required>
+        <button type="button" id="togglePassword">Show</button>
+      </div>
+      <div class="error-msg" id="passwordError"></div>
+
+      <!-- Submit Button -->
+      <button type="submit">Register</button>
+
+      <!-- Success Message -->
+      <div class="success-msg" id="successMsg"></div>
+    </form>
+  </div>
+
+  <script>
+    $(document).ready(function() {
+      // Toggle password visibility
+      $('#togglePassword').click(function() {
+        const passwordInput = $('#password');
+        const type = passwordInput.attr('type') === 'password' ? 'text' : 'password';
+        passwordInput.attr('type', type);
+        $(this).text(type === 'password' ? 'Show' : 'Hide');
+      });
+
+      // Form submission
+      $('#registrationForm').submit(function(event) {
+        event.preventDefault(); // Prevent default form submission
+
+        // Clear previous messages
+        $('.error-msg').text('');
+        $('#successMsg').text('');
+
+        // Input values
+        const name = $('#name').val().trim();
+        const email = $('#email').val().trim();
+        const phone = $('#phone').val().trim();
+        const password = $('#password').val().trim();
+
+        let valid = true;
+
+        // Name validation
+        if(name === '') {
+          $('#nameError').text('Name is required.');
+          valid = false;
+        }
+
+        // Email validation
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if(email === '') {
+          $('#emailError').text('Email is required.');
+          valid = false;
+        } else if(!emailPattern.test(email)) {
+          $('#emailError').text('Enter a valid email address.');
+          valid = false;
+        }
+
+        // Phone validation
+        const phonePattern = /^\d{10}$/;
+        if(phone === '') {
+          $('#phoneError').text('Phone number is required.');
+          valid = false;
+        } else if(!phonePattern.test(phone)) {
+          $('#phoneError').text('Phone number must be 10 digits.');
+          valid = false;
+        }
+
+        // Password validation
+        const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/;
+        if(password === '') {
+          $('#passwordError').text('Password is required.');
+          valid = false;
+        } else if(!passwordPattern.test(password)) {
+          $('#passwordError').text('Password must be at least 6 characters and include uppercase, lowercase, and a number.');
+          valid = false;
+        }
+
+        // If all validations pass
+        if(valid) {
+          $('#successMsg').text('Form submitted successfully!');
+          // Optionally clear the form
+          $('#registrationForm')[0].reset();
+          $('#togglePassword').text('Show');
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>
